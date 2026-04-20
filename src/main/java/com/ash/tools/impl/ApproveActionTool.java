@@ -14,6 +14,11 @@ public class ApproveActionTool implements Tool {
     private static final String FILE_NAME = "audit.log";
 
     @Override
+    public String getName() {
+        return "approve_action";
+    }
+
+    @Override
     public JsonElement execute(JsonObject arguments) throws Exception {
 
         if (arguments == null || !arguments.has("action_id")) {

@@ -42,3 +42,6 @@ audit.log
 
 ### Mac OS ###
 .DS_Store
+
+*.md
+!README.md

@@ -1,5 +1,6 @@
 package com.ash.tools.interceptor;
 
+import com.ash.protocol.RequestContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.BufferedReader;
@@ -11,7 +12,7 @@ public class ApprovalInterceptor implements ToolInterceptor {
     private static final String AUDIT_FILE = "audit.log";
 
     @Override
-    public JsonElement intercept(InterceptorChain chain, String toolName, JsonObject arguments) throws Exception {
+    public JsonElement intercept(InterceptorChain chain, String toolName, JsonObject arguments, RequestContext context) throws Exception {
         
         if (requiresApprovalCheck(toolName)) {
             if (!isApproved(toolName, arguments)) {
@@ -19,7 +20,7 @@ public class ApprovalInterceptor implements ToolInterceptor {
             }
         }
 
-        return chain.proceed(toolName, arguments);
+        return chain.proceed(toolName, arguments, context);
     }
 
     private boolean requiresApprovalCheck(String toolName) {

@@ -2,6 +2,7 @@ package com.ash.tools.interceptor;
 
 import com.ash.tools.Tool;
 import com.ash.tools.ToolRegistry;
+import com.ash.protocol.RequestContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -19,11 +20,11 @@ public class InterceptorChainImpl implements InterceptorChain {
     }
 
     @Override
-        public JsonElement proceed(String toolName, JsonObject arguments) throws Exception {
+        public JsonElement proceed(String toolName, JsonObject arguments, RequestContext context) throws Exception {
             if (index < interceptors.size()) {
                 ToolInterceptor interceptor = interceptors.get(index);
                 InterceptorChain nextChain = new InterceptorChainImpl(interceptors, index + 1, toolRegistry);
-                return interceptor.intercept(nextChain, toolName, arguments);
+                return interceptor.intercept(nextChain, toolName, arguments, context);
             } else {
                 if (toolName == null || toolName.trim().isEmpty()) {
                     throw new Exception("Tool name cannot be null or empty");

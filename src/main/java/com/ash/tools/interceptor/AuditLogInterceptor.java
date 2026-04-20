@@ -1,5 +1,6 @@
 package com.ash.tools.interceptor;
 
+import com.ash.protocol.RequestContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.BufferedWriter;
@@ -12,7 +13,7 @@ public class AuditLogInterceptor implements ToolInterceptor {
     private static final String AUDIT_FILE = "audit.log";
 
     @Override
-    public JsonElement intercept(InterceptorChain chain, String toolName, JsonObject arguments) throws Exception {
+    public JsonElement intercept(InterceptorChain chain, String toolName, JsonObject arguments, RequestContext context) throws Exception {
         
         if (requiresApproval(toolName)) {
             String actionId = generateActionId();
@@ -20,7 +21,7 @@ public class AuditLogInterceptor implements ToolInterceptor {
             throw new Exception("Approval required for actionId: " + actionId);
         }
 
-        return chain.proceed(toolName, arguments);
+        return chain.proceed(toolName, arguments, context);
     }
 
     private boolean requiresApproval(String toolName) {

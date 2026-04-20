@@ -8,13 +8,17 @@ import com.ash.tools.ToolListHandler;
 import com.ash.tools.ToolRegistry;
 import com.ash.tools.impl.EchoTool;
 import com.ash.tools.impl.ListInstancesTool;
+import com.ash.tools.impl.ListAllCloudInstancesTool;
 import com.ash.tools.impl.ApproveActionTool;
 import com.ash.tools.impl.DeleteInstanceTool;
 import com.ash.tools.interceptor.ToolInterceptor;
+import com.ash.tools.interceptor.SecurityInterceptor;
+import com.ash.tools.interceptor.MetricsInterceptor;
 import com.ash.tools.interceptor.LoggingInterceptor;
 import com.ash.tools.interceptor.AuditLogInterceptor;
 import com.ash.tools.interceptor.ApprovalInterceptor;
 import com.ash.tools.interceptor.ReadOnlyInterceptor;
+import com.ash.protocol.RequestContext;
 import com.ash.config.AppConfig;
 import com.google.gson.*;
 
@@ -22,6 +26,8 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
@@ -31,6 +37,8 @@ public class Main {
         ToolRegistry toolRegistry = new ToolRegistry();
 
         List<ToolInterceptor> interceptors = new ArrayList<>();
+        interceptors.add(new SecurityInterceptor());
+        interceptors.add(new MetricsInterceptor());
         interceptors.add(new LoggingInterceptor());
         interceptors.add(new AuditLogInterceptor());
         interceptors.add(new ApprovalInterceptor());
@@ -43,6 +51,7 @@ public class Main {
 
         toolRegistry.registerTool("echo_tool", new EchoTool());
         toolRegistry.registerTool("list_instances", new ListInstancesTool());
+        toolRegistry.registerTool("list_all_instances", new ListAllCloudInstancesTool());
         toolRegistry.registerTool("approve_action", new ApproveActionTool());
         toolRegistry.registerTool("delete_instance", new DeleteInstanceTool());
 

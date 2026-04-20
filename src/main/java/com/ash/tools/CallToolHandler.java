@@ -1,6 +1,7 @@
 package com.ash.tools;
 
 import com.ash.protocol.McpHandler;
+import com.ash.protocol.RequestContext;
 import com.ash.tools.interceptor.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -32,9 +33,22 @@ public class CallToolHandler implements McpHandler {
                 ?params.getAsJsonObject("arguments")
                 :new JsonObject();
 
+        RequestContext context = null;
+        if (params.has("_context") && params.get("_context").isJsonObject()) {
+            JsonObject contextObj = params.getAsJsonObject("_context");
+            java.util.Map<String, String> headers = new java.util.HashMap<>();
+            if (contextObj.has("headers") && contextObj.get("headers").isJsonObject()) {
+                JsonObject headersObj = contextObj.getAsJsonObject("headers");
+                for (String key : headersObj.keySet()) {
+                    headers.put(key, headersObj.get(key).getAsString());
+                }
+            }
+            context = new RequestContext(headers);
+        }
+
         InterceptorChain chain=new InterceptorChainImpl(interceptors,0,toolRegistry);
 
-        return chain.proceed(name,argument);
+        return chain.proceed(name,argument, context);
     }
 
 }
