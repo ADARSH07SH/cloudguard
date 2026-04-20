@@ -1,5 +1,6 @@
 package com.ash.protocol;
 
+import com.ash.config.AppConfig;
 import com.google.gson.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,14 +16,14 @@ public class Dispatcher {
     public JsonObject dispatch(JsonObject request) {
 
         if (request == null || !request.has("method") || request.get("method").isJsonNull()) {
-            return buildError(request, -32600, "Invalid Request");
+            return buildError(request, AppConfig.ERROR_INVALID_REQUEST, "Invalid Request");
         }
 
         String method;
         try {
             method = request.get("method").getAsString();
         } catch (Exception e) {
-            return buildError(request, -32600, "Invalid Request");
+            return buildError(request, AppConfig.ERROR_INVALID_REQUEST, "Invalid Request");
         }
 
         JsonObject params = request.has("params") && request.get("params").isJsonObject()
@@ -33,7 +34,7 @@ public class Dispatcher {
 
         if (handler == null) {
             if (!request.has("id")) return null;
-            return buildError(request, -32601, "Method not found");
+            return buildError(request, AppConfig.ERROR_METHOD_NOT_FOUND, "Method not found");
         }
 
         try {
@@ -44,7 +45,7 @@ public class Dispatcher {
             }
 
             JsonObject response = new JsonObject();
-            response.addProperty("jsonrpc", "2.0");
+            response.addProperty("jsonrpc", AppConfig.JSON_RPC_VERSION);
             response.add("id", request.get("id"));
             response.add("result", result == null ? JsonNull.INSTANCE : result);
 
@@ -52,7 +53,7 @@ public class Dispatcher {
 
         } catch (Exception e) {
             if (!request.has("id")) return null;
-            return buildError(request, -32603, e.getMessage());
+            return buildError(request, AppConfig.ERROR_INTERNAL_ERROR, e.getMessage());
         }
     }
 
@@ -61,7 +62,7 @@ public class Dispatcher {
         if (request == null || !request.has("id")) return null;
 
         JsonObject error = new JsonObject();
-        error.addProperty("jsonrpc", "2.0");
+        error.addProperty("jsonrpc", AppConfig.JSON_RPC_VERSION);
         error.add("id", request.get("id"));
 
         JsonObject err = new JsonObject();

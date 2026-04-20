@@ -1,16 +1,20 @@
 package com.ash.tools;
 
 import com.ash.protocol.McpHandler;
-import com.ash.tools.impl.EchoTool;
+import com.ash.tools.interceptor.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.List;
 
 public class CallToolHandler implements McpHandler {
 
     private final ToolRegistry toolRegistry;
+    private final List<ToolInterceptor> interceptors;
 
-    public CallToolHandler(ToolRegistry toolRegistry) {
+    public CallToolHandler(ToolRegistry toolRegistry, List<ToolInterceptor> interceptors) {
         this.toolRegistry = toolRegistry;
+        this.interceptors = interceptors;
     }
 
     @Override
@@ -28,13 +32,10 @@ public class CallToolHandler implements McpHandler {
                 ?params.getAsJsonObject("arguments")
                 :new JsonObject();
 
-        Tool tool=toolRegistry.getTool(name);
+        InterceptorChain chain=new InterceptorChainImpl(interceptors,0,toolRegistry);
 
-        if(tool==null){
-            throw new Exception("No such tool "+name);
-        }
-
-        return tool.execute(argument);
+        return chain.proceed(name,argument);
     }
 
 }
+
