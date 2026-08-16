@@ -1,18 +1,66 @@
+# Compiled class file
+*.class
+
+# Log files
+*.log
+logs/
+audit.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+!/.mvn/wrapper/maven-wrapper.jar
+
+# Dependencies / Third-party libraries
+lib/
+libs/
+
+# Virtual machine crash logs
+default.profraw
+hs_err_pid*
+replay_pid*
+
+# Maven build artifacts
 target/
-!.mvn/wrapper/maven-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# Build artifacts & output
+out/
+build/
+dist/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
 ### IntelliJ IDEA ###
 .idea/
 *.iws
 *.iml
 *.ipr
-
-### Build artifacts ###
-out/
-*.war
-*.ear
+*.idea
 
 ### Eclipse ###
 .apt_generated
@@ -25,23 +73,27 @@ out/
 
 ### NetBeans ###
 /nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
 
-### Runtime files ###
-audit.log
-*.log
+### Environment & Secrets ###
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
 
-### Mac OS ###
+### OS Generated Files ###
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
 
+### Notes & Markdown (Keep README.md) ###
 *.md
 !README.md

@@ -18,19 +18,18 @@ public class McpController {
 
     private final Dispatcher dispatcher;
 
+    private final com.ash.service.TelemetryService telemetryService;
+
     public McpController() {
         this.dispatcher = AppFactory.createDispatcher();
+        this.telemetryService = new com.ash.service.TelemetryService();
     }
-
-    private final Map<String, SseEmitter> clients = new ConcurrentHashMap<>();
 
     @GetMapping(value="/events",produces= MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter stream(){
         SseEmitter emitter=new SseEmitter(Long.MAX_VALUE);
         String clientId="id_"+System.currentTimeMillis()+"sse_emitter"+System.currentTimeMillis();
-        clients.put(clientId,emitter);
-        emitter.onCompletion(() -> {clients.remove(clientId);});
-        emitter.onTimeout(() -> {clients.remove(clientId);});
+        telemetryService.addClient(clientId, emitter);
         return emitter;
     }
 

@@ -26,27 +26,34 @@ public class ListAllCloudInstancesTool implements Tool {
 
         Map<String, CloudProvider> providers = CloudProviderFactory.getAllProviders();
         
-        for (Map.Entry<String, CloudProvider> entry : providers.entrySet()) {
-            CloudProvider provider = entry.getValue();
-            sb.append("=== ").append(provider.getProviderName()).append(" ===\n");
-            
-            try {
-                List<Instance> instances = provider.listInstances();
-                
-                if (instances.isEmpty()) {
-                    sb.append("No instances found\n");
-                } else {
-                    for (Instance instance : instances) {
-                        sb.append("  - ").append(instance.getId())
-                                .append(" (").append(instance.getType()).append(") - ")
-                                .append(instance.getState()).append("\n");
+        List<java.util.concurrent.CompletableFuture<String>> futures = providers.values().stream()
+                .map(provider -> java.util.concurrent.CompletableFuture.supplyAsync(() -> {
+                    StringBuilder providerSb = new StringBuilder();
+                    providerSb.append("=== ").append(provider.getProviderName()).append(" ===\n");
+                    try {
+                        List<Instance> instances = provider.listInstances();
+                        if (instances.isEmpty()) {
+                            providerSb.append("No instances found\n");
+                        } else {
+                            for (Instance instance : instances) {
+                                providerSb.append("  - ").append(instance.getId())
+                                        .append(" (").append(instance.getType()).append(") - ")
+                                        .append(instance.getState()).append("\n");
+                            }
+                        }
+                    } catch (Exception e) {
+                        providerSb.append("  Error: ").append(e.getMessage()).append("\n");
                     }
-                }
-            } catch (Exception e) {
-                sb.append("  Error: ").append(e.getMessage()).append("\n");
-            }
-            
-            sb.append("\n");
+                    providerSb.append("\n");
+                    return providerSb.toString();
+                }))
+                .collect(java.util.stream.Collectors.toList());
+
+        java.util.concurrent.CompletableFuture<Void> allOf = java.util.concurrent.CompletableFuture.allOf(futures.toArray(new java.util.concurrent.CompletableFuture[0]));
+        allOf.join();
+
+        for (java.util.concurrent.CompletableFuture<String> future : futures) {
+            sb.append(future.get());
         }
 
         JsonObject result = new JsonObject();

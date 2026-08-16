@@ -34,6 +34,7 @@ public class AppFactory {
 
          toolRegistry.registerTool("echo_tool", new EchoTool());
          toolRegistry.registerTool("list_instances", new ListInstancesTool());
+         toolRegistry.registerTool("list_all_cloud_instances", new com.ash.tools.impl.ListAllCloudInstancesTool());
          toolRegistry.registerTool("approve_action", new ApproveActionTool());
          toolRegistry.registerTool("delete_instance", new DeleteInstanceTool());
 
